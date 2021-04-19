@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react'
 
-function App() {
+const App = () => {
+  const [time, setTime] = useState(0);
+  const [nonsense, setNonsense] = useState({});
+
+  //this more compact syntax uses promises instead of async/await to grab data from the backend
+  //I'm not sure if there's any downside to doing it the pithier way
+  //maybe this doesn't work so well with events like button presses?
+  useEffect(() => {
+    fetch('/time').then(res => res.json()).then(data => {
+      //note - the data.time syntax here means the same thing as data['time']
+      setTime(data.time);
+    });
+  }, []);
+
+  //this code uses async/await as with the traversy react tutorial
+  useEffect(() => {
+    const getNonsense = async () => {
+      const nonsenseFromServer = await fetchNonsense();
+      setNonsense(nonsenseFromServer);
+    };
+
+    getNonsense();
+  }, []);
+
+  const fetchNonsense = async () => {
+    const res = await fetch('/nonsense');
+    return await res.json()
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Reacting with Flask!</h1>
+      <p>The time is {time}!</p>
+      <h4>The Nonsense is as Follows...</h4>
+      <ul>
+      {Object.keys(nonsense).map((nsKey) => <li key={nsKey}>{nsKey}: {nonsense[nsKey]}</li>)}
+      </ul>
     </div>
   );
 }
