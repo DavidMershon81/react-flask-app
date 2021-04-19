@@ -8,7 +8,7 @@ const App = () => {
   //I'm not sure if there's any downside to doing it the pithier way
   //maybe this doesn't work so well with events like button presses?
   useEffect(() => {
-    fetch('/time').then(res => res.json()).then(data => {
+    fetch('/api/time').then(res => res.json()).then(data => {
       //note - the data.time syntax here means the same thing as data['time']
       setTime(data.time);
     });
@@ -25,7 +25,7 @@ const App = () => {
   }, []);
 
   const fetchNonsense = async () => {
-    const res = await fetch('/nonsense');
+    const res = await fetch('/api/nonsense');
     return await res.json()
   };
 
