@@ -5,6 +5,8 @@ services:
     build: ./
     container_name: flask_react_test_api
     restart: always
+    links:
+      - db
     expose:
       - 8080
   
@@ -14,3 +16,13 @@ services:
     restart: always
     ports:
       - "80:80"
+
+  db:
+    image: mysql
+    container_name: flask_react_test_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 const App = () => {
   const [time, setTime] = useState(0);
   const [nonsense, setNonsense] = useState({});
+  const [cities, setCities] = useState([]);
 
   //this more compact syntax uses promises instead of async/await to grab data from the backend
   //I'm not sure if there's any downside to doing it the pithier way
@@ -13,6 +14,15 @@ const App = () => {
       setTime(data.time);
     });
   }, []);
+
+
+  //testing pulling an array of cities from the test mysql db on the backend
+  useEffect(() => {
+    fetch('/api/test_db').then(res => res.json()).then(data => {
+      setCities(data);
+    });
+  }, []);
+  console.log(cities);
 
   //this code uses async/await as with the traversy react tutorial
   useEffect(() => {
@@ -36,6 +46,10 @@ const App = () => {
       <h4>The Nonsense is as Follows...</h4>
       <ul>
       {Object.keys(nonsense).map((nsKey) => <li key={nsKey}>{nsKey}: {nonsense[nsKey]}</li>)}
+      </ul>
+      <h4>And here's some cities!</h4>
+      <ul>
+      {cities.map((city) => <li key={city['id']}>{city['name']}</li>)}
       </ul>
     </div>
   );
