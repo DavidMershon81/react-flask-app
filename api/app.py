@@ -47,7 +47,3 @@ def get_nonsense():
 @app.route('/api/test_db', methods=["GET"])
 def test_db():
     return jsonify([ { 'id' : city.id, 'name' : city.name } for city in get_all_cities()])
-
-#start app
-if __name__ == '__main__':
-    app.run()
