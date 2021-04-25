@@ -1,5 +1,4 @@
 from dotenv import dotenv_values
-import os
 import pymysql
 pymysql.install_as_MySQLdb()
 from flask import Flask, request, jsonify
@@ -13,9 +12,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 'false'
 
 #choose the appropriate database URL depending on if we're running in docker compose in production 
 # or with a standalone test db in development
-flask_env = os.environ['FLASK_ENV']
-config = dotenv_values(".env")
-db_url_key = 'PRODUCTION_DATABASE_URL' if flask_env == 'production' else 'DEVELOPMENT_DATABASE_URL'
+config = dotenv_values("app_env")
+db_url_key = 'PRODUCTION_DATABASE_URL' if config['FLASK_ENV'] == 'production' else 'DEVELOPMENT_DATABASE_URL'
 db_url = config[db_url_key]
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 

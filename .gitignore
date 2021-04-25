@@ -25,4 +25,4 @@ yarn-debug.log*
 yarn-error.log*
 
 #python environment vars
-/api/.env
+/api/app_env
