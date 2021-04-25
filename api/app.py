@@ -1,3 +1,5 @@
+from dotenv import dotenv_values
+import os
 import pymysql
 pymysql.install_as_MySQLdb()
 from flask import Flask, request, jsonify
@@ -9,11 +11,13 @@ app = Flask(__name__, static_folder='../build', static_url_path='/')
 #import and configure database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 'false'
 
-#this connects to the test database I built in a standalone docker container called "mysql_test"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost:3306/testdb'
-
-#this connect the db to the db I'm building with docker compose
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@db:3306/testdb'
+#choose the appropriate database URL depending on if we're running in docker compose in production 
+# or with a standalone test db in development
+flask_env = os.environ['FLASK_ENV']
+config = dotenv_values(".env")
+db_url_key = 'PRODUCTION_DATABASE_URL' if flask_env == 'production' else 'DEVELOPMENT_DATABASE_URL'
+db_url = config[db_url_key]
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 
 db = SQLAlchemy(app)
 
