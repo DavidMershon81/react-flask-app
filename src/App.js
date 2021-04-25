@@ -1,32 +1,7 @@
 import { useState, useEffect } from 'react'
+import FormWithText from './components/FormWithText'
 import './App.css';
 
-const SubmitTextForm = ({placeholderText, submitLabel, submitEvent}) => {
-  const [cityName, setCityName] = useState('');
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if(!cityName)
-    {
-      alert('Enter a city name!');
-      return;
-    }
-
-    submitEvent(cityName)
-  }
-
-  return (
-    <form onSubmit={onSubmit}>
-      <input type="text" placeholder={placeholderText} value={cityName} onChange={ (e) => setCityName(e.target.value) }/>
-      <input type="submit" value={submitLabel}/>
-    </form>
-  )
-}
-
-SubmitTextForm.defaultProps = {
-  submitLabel: 'Submit',
-  placeholderText: 'Type Something'
-}
 
 const App = () => {
   const [cities, setCities] = useState([]);
@@ -39,6 +14,22 @@ const App = () => {
   }, []);
   console.log(cities);
 
+  const addCity = (newCityName) => {
+    fetch('/api/add_city', {
+      method: 'POST',
+      headers: { 
+        'Content-type' : 'application/json' 
+      },
+      body: JSON.stringify({ 'newCityName' : newCityName })
+    }).then(res => { 
+      return res.json(); 
+    }).then(newCity => {
+      console.log(newCity);
+      setCities([...cities, newCity]);
+    });
+  };
+
+  /*
   const onAddCity = (newCityName) => {
     console.log('adding city: ' + newCityName);
     const newCity = {
@@ -47,11 +38,12 @@ const App = () => {
     };
     setCities([...cities, newCity]);
   }
+  */
 
   return (
     <div className="App">
       <h1>Reacting with Flask!</h1>
-      <SubmitTextForm submitLabel='Add City' placeholderText='City Name' submitEvent={onAddCity}/>
+      <FormWithText submitLabel='Add City' placeholderText='City Name' submitEvent={addCity}/>
       <h4>A List of Cities for You!</h4>
       <ul>
       {cities.map((city) => <li key={city['id']}>{city['name']}</li>)}

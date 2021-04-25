@@ -1,6 +1,6 @@
 import pymysql
 pymysql.install_as_MySQLdb()
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 #init flask app
@@ -29,7 +29,8 @@ def db_add_city(city_name):
     new_city = City(name=city_name)
     db.session.add(new_city)
     db.session.commit()
-    print(f"adding {city_name}")
+    print(f"adding city to DB... id:{new_city.id} name: {new_city.name}")
+    return new_city
 
 db.create_all()
 
@@ -39,10 +40,13 @@ def index():
     return app.send_static_file('index.html')
 
 @app.route('/api/get_cities', methods=["GET"])
-def test_db():
+def get_cities():
     return jsonify([ { 'id' : city.id, 'name' : city.name } for city in db_get_all_cities()])
 
-@app.route('/api/add_city/<city_name>', methods=["GET"])
-def add_city(city_name):
-    db_add_city(city_name)
-    return f"adding {city_name}"
+@app.route('/api/add_city', methods=["POST"])
+def add_city():
+    city_name = request.json['newCityName']
+    print(f"city_name: {city_name}")
+    new_city = db_add_city(city_name)
+    return jsonify({ 'id' : new_city.id, 'name' : new_city.name })
+    
