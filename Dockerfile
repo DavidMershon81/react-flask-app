@@ -12,4 +12,6 @@ COPY /api /app/
 
 RUN pip install -r requirements.txt
 
+RUN export FLASK_ENV=production
+
 CMD ["uwsgi", "app.ini"]
